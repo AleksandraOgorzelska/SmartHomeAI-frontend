@@ -1,0 +1,35 @@
+.section {
+  text-align:center;
+  font-size: 3em;
+  margin-top: -35px;
+}
+
+#fullpage {
+  width: 100%;
+  //background: #ddd;
+}
+
+.next-page-btn {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+img {
+  max-width: 90%;
+  max-height: 50%;
+}
+
+#board-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.home-card {
+  width: 45%;
+  margin: 30px auto auto;
+  padding-top: 10px;
+  padding-bottom: 30px;
+  text-align: center;
+}

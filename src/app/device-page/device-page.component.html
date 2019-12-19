@@ -1,0 +1,97 @@
+<div id="device-container" *ngIf="device">
+  <button mat-raised-button="" style="padding: 5px 10px;" color="primary" class="back-button" (click)="router.navigate(['/devices'])">
+    <i class="fa-2x fas fa-arrow-alt-circle-left"></i> Back
+  </button>
+  <mat-card id="device-card">
+    <i class="fa-10x {{ device.type.icon }}" id="device-icon"></i>
+    <mat-card-title>
+      <h2>{{ device.name }}</h2>
+      <h6 *ngIf="device.owner != accountService.get_username()">
+        Shared by {{ device.owner }}
+      </h6>
+    </mat-card-title>
+    <div [ngSwitch]="device.mainCapability.component" class="capability">
+      <h2>
+        <i *ngIf="device.mainCapability.component != 'icon'" class="{{ device.mainCapability.icon }}"></i>
+        {{ device.mainCapability.label }}
+        <button mat-raised-button color="primary" (click)="copyToClipboard(mqtt_topic+'/'+device.mainCapability.name)">
+          {{ mqtt_topic }}/{{ device.mainCapability.name }}
+        </button>
+        <button *ngIf="owner === undefined" mat-raised-button color="primary" style="margin-left: 5px;"
+                routerLink="/chart/{{ device.slug }}/{{ device.mainCapability.name }}">
+          chart
+        </button>
+        <button *ngIf="owner !== undefined" mat-raised-button color="primary" style="margin-left: 5px;"
+                routerLink="/chart/{{ device.owner }}/{{ device.slug }}/{{ device.mainCapability.name }}">
+          chart
+        </button>
+      </h2>
+
+      <div class="card-component">
+        <mat-slide-toggle *ngSwitchCase="'switch'" color="primary" (change)="pub_switch($event, device.mainCapability.name)"
+          [checked]="capability_values.get(device.mainCapability.name) === 1"></mat-slide-toggle>
+        <mat-slider thumbLabel *ngSwitchCase="'slider'" min="0" max="100" step="1" tickInterval="1"
+                    (change)="pub_slider($event, device.mainCapability.name)"
+                    color="primary" [value]="capability_values.get(device.mainCapability.name)"></mat-slider>
+        <h3 *ngSwitchCase="'text'" class="card-sensor-text">
+          {{ capability_values.get(device.mainCapability.name) }}
+        </h3>
+        <span *ngSwitchCase="'icon'" class="card-sensor-text">
+          <i class="fa-3x {{ device.mainCapability.icon }}
+              {{ capability_values.get(device.mainCapability.name) === 1 ? 'icon-on' : 'icon-off' }}"></i>
+          {{ capability_values.get(device.mainCapability.name) === 1 ? 'On' : 'Off' }}
+        </span>
+      </div>
+    </div>
+    <mat-card-content id="container">
+      <div class="capability" *ngFor="let cap of device.capabilities">
+        <i *ngIf="cap.component != 'icon'" class="fa-2x {{ cap.icon }}"></i> {{ cap.label }}
+        <button mat-raised-button color="primary" (click)="copyToClipboard(mqtt_topic+'/'+cap.name)">
+          {{ mqtt_topic }}/{{ cap.name }}
+        </button>
+        <button *ngIf="owner === undefined" mat-raised-button color="primary" style="margin-left: 5px;"
+                routerLink="/chart/{{ device.slug }}/{{ cap.name }}">
+          chart
+        </button>
+        <button *ngIf="owner !== undefined" mat-raised-button color="primary" style="margin-left: 5px;"
+                routerLink="/chart/{{ device.owner }}/{{ device.slug }}/{{ cap.name }}">
+          chart
+        </button>
+        <div [ngSwitch]="cap.component">
+          <mat-slide-toggle *ngSwitchCase="'switch'" color="primary" (change)="pub_switch($event, cap.name)"
+                            [checked]="capability_values.get(cap.name) === 1"></mat-slide-toggle>
+          <mat-slider thumbLabel *ngSwitchCase="'slider'" min="0" max="100" step="1" tickInterval="1"
+                      (change)="pub_slider($event, cap.name)"
+                      color="primary" [value]="capability_values.get(cap.name)">
+          </mat-slider>
+          <span *ngSwitchCase="'text'" class="card-sensor-text">
+            {{ capability_values.get(cap.name) }}
+          </span>
+          <span *ngSwitchCase="'icon'" class="card-sensor-text">
+            <i class="fa-3x {{ cap.icon }} {{ capability_values.get(cap.name) === 1 ? 'icon-on' : 'icon-off' }}"></i>
+            {{ capability_values.get(cap.name) === 1 ? 'On' : 'Off' }}
+          </span>
+        </div>
+      </div>
+    </mat-card-content>
+    <mat-card *ngIf="device.owner === accountService.get_username()">
+      <h3>Share your device to others!</h3>
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Username" [(ngModel)]="to_share">
+      </mat-form-field>
+      <button mat-raised-button color="primary" style="margin-left: 5px" (click)="share(to_share)">Share</button>
+      <mat-list>
+        <mat-list-item *ngFor="let user of shared_to_users">
+          <i class="fas fa-trash fa-1x" (click)="stopSharing(user)" style="cursor: pointer"></i>
+          &nbsp;&nbsp;{{ user.username }}
+        </mat-list-item>
+      </mat-list>
+    </mat-card>
+  </mat-card>
+</div>
+<div *ngIf="!device" style="margin: 30px auto auto; text-align: center;">
+  <h1>Device not found</h1>
+  <button mat-button color="primary" class="back-button" (click)="router.navigate(['/devices'])">
+    <i class="fa-2x fas fa-arrow-alt-circle-left"></i> Back
+  </button>
+</div>

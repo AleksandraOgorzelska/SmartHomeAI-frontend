@@ -1,0 +1,30 @@
+@import "~src/styles";
+
+#action-container {
+  width: 95%;
+  padding-top: 20px;
+  display: flex;
+  margin: auto;
+  text-align: center;
+}
+
+#add-action {
+  width: 25%;
+  /*border-right: 1px solid black;*/
+  /*border-top: 1px solid black;*/
+}
+
+#actions {
+  width: 75%;
+  /*border-top: 1px solid black;*/
+}
+
+mat-form-field {
+  display: block;
+}
+
+.header {
+  font-weight: 600;
+  //background: mat-color($primary, 600);
+  //color: #fff;
+}

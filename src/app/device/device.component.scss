@@ -1,0 +1,106 @@
+@import "~@angular/material/theming";
+
+.icon-on {
+  color: mat-color(mat-palette($mat-green, 600));
+}
+
+.icon-off {
+  color: mat-color(mat-palette($mat-red, 600));
+}
+
+.display-table {
+  display: table;
+}
+
+.toolbar-icon {
+  cursor: pointer;
+}
+
+#addCapability {
+  margin-left: 10px;
+  margin-bottom: 10px;
+}
+
+.row {
+  /*display: flex;*/
+  display: block;
+  flex-wrap: wrap;
+  /*flex-direction: row;*/
+  /*width:100%;*/
+}
+
+.grid {
+  display: flex;
+  padding: 10px 0;
+}
+
+.capability-group {
+  width: auto;
+  display: flex;
+  margin: 10px 0 10px 0;
+}
+
+.capability-tab {
+  border: 1px solid rgba(0,0,0,0.5);
+  border-radius: 15px;
+  padding: 10px 20px;
+}
+
+#addCapability {
+  margin-top: 10px;
+}
+
+
+.device-card {
+  width: 300px;
+  margin: 30px;
+}
+
+.card-icon {
+  width: 25%;
+  height: 100%;
+}
+
+.card-flex {
+  width: 100%;
+  display: flex;
+  flex: 1 1 auto;
+}
+
+mat-card-subtitle {
+  padding-top: 10px;
+}
+
+#device-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.card-component {
+  margin-top: 15px;
+}
+
+.card-sensor-text {
+  font-size: 22px;
+}
+
+.device-show {
+  float: right;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+}
+
+.device-delete {
+  float: right;
+  right: 15px;
+  top: 15px;
+  position: absolute;
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+  color: white;
+}

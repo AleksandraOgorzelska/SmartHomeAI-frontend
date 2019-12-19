@@ -1,0 +1,11 @@
+<div id = "myChart" [hidden]="!chart">
+  <div id="sizer">
+    <button mat-raised-button color="primary" class="back-button" routerLink="/device/{{ device }}">
+      <i class="fa-2x fas fa-arrow-alt-circle-left"></i> Back
+    </button>
+    <h2>
+      {{ capability }}
+    </h2>
+    <canvas id="chart-canvas">{{ chart }}</canvas>
+  </div>
+</div>

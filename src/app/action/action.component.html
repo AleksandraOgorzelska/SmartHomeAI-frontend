@@ -1,0 +1,108 @@
+<div id="action-container">
+  <div id="add-action" *ngIf="devices">
+    <h2>Condition</h2>
+    <mat-form-field>
+      <mat-select placeholder="Device" (selectionChange)="selectDevice($event.value)">
+        <mat-option *ngFor="let device of devices" [value]="device">
+          {{ device.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-select placeholder="Capability" (selectionChange)="selectCapability($event.value)">
+        <mat-option *ngFor="let cap of capabilities" [value]="cap">
+          {{ cap.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <span *ngIf="newAction.condition_capability && (newAction.condition_capability.component == 'icon'
+                 || newAction.condition_capability.component == 'switch'); then bin else mval">
+
+    </span>
+    <ng-template #bin>
+      <mat-form-field>
+        <mat-select placeholder="State" (selectionChange)="selectValue($event.value)">
+          <mat-option value=1>True</mat-option>
+          <mat-option value=0>False</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ng-template>
+
+    <ng-template #mval>
+      <mat-form-field>
+        <mat-select placeholder="Condition" (selectionChange)="selectCondition($event.value)">
+          <mat-option value="eq">==</mat-option>
+          <mat-option value="gt">></mat-option>
+          <mat-option value="ge">>=</mat-option>
+          <mat-option value="lt"><</mat-option>
+          <mat-option value="le"><=</mat-option>
+          <mat-option value="ne">!=</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <input matInput type="number" placeholder="Value" (change)="selectValue($event.srcElement.value)">
+      </mat-form-field>
+    </ng-template>
+    <h2>Action</h2>
+    <mat-form-field>
+      <mat-select placeholder="Device" (selectionChange)="selectActionDevice($event.value)">
+        <mat-option *ngFor="let device of devices" [value]="device">
+          {{ device.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-select placeholder="Capability" (selectionChange)="selectActionCapability($event.value)">
+        <mat-option *ngFor="let cap of actionCapabilities" [value]="cap">
+          {{ cap.label }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field *ngIf="isActionBinary">
+      <mat-select placeholder="State" (selectionChange)="selectActionValue($event.value)">
+        <mat-option value=1>True</mat-option>
+        <mat-option value=0>False</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field *ngIf="!isActionBinary">
+      <input matInput type="number" placeholder="Value" (change)="selectActionValue($event.srcElement.value)">
+    </mat-form-field>
+    <button mat-raised-button (click)="addDeviceAction()">Add action!</button>
+  </div>
+
+  <div id="actions" *ngIf="deviceActions">
+    <h1 style="width: 100%; text-align: center;">Device actions</h1>
+    <mat-grid-list cols="13" rowHeight="2:1">
+      <mat-grid-tile class="header" [colspan]="2">Condition Device</mat-grid-tile>
+      <mat-grid-tile class="header" [colspan]="2">Condition Capability</mat-grid-tile>
+      <mat-grid-tile class="header">Condition</mat-grid-tile>
+      <mat-grid-tile class="header">Value</mat-grid-tile>
+      <mat-grid-tile class="header" [colspan]="2">Action Device</mat-grid-tile>
+      <mat-grid-tile class="header" [colspan]="2">Action Capability</mat-grid-tile>
+      <mat-grid-tile class="header">Value</mat-grid-tile>
+      <mat-grid-tile class="header">Notify</mat-grid-tile>
+      <mat-grid-tile class="header">Delete</mat-grid-tile>
+
+      <span *ngFor="let action of deviceActions">
+        <mat-grid-tile [colspan]="2">{{ action.condition_device }}</mat-grid-tile>
+        <mat-grid-tile [colspan]="2">{{ action.condition_capability.name }}</mat-grid-tile>
+        <mat-grid-tile>{{ strToSignMap.get(action.condition) }}</mat-grid-tile>
+        <mat-grid-tile>{{ action.condition_value }}</mat-grid-tile>
+        <mat-grid-tile [colspan]="2">{{ action.action_device }}</mat-grid-tile>
+        <mat-grid-tile [colspan]="2">{{ action.action_capability.name }}</mat-grid-tile>
+        <mat-grid-tile *ngIf="['switch', 'icon'].indexOf(action.action_capability.component) != -1">
+          {{ action.action_capability_value == 1 ? 'true' : 'false' }}
+        </mat-grid-tile>
+        <mat-grid-tile *ngIf="['switch', 'icon'].indexOf(action.action_capability.component) == -1">
+          {{ action.action_capability_value }}
+        </mat-grid-tile>
+        <mat-grid-tile>
+          <mat-checkbox [checked]="action.notify" value="{{ action.id }}" (change)="updateNotify($event)"></mat-checkbox>
+        </mat-grid-tile>
+        <mat-grid-tile>
+          <mat-icon (click)="deleteAction(action.id)" style="cursor: pointer">delete</mat-icon>
+        </mat-grid-tile>
+      </span>
+    </mat-grid-list>
+  </div>
+</div>

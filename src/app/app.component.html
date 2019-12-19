@@ -1,0 +1,56 @@
+<div id="root" [class.alternative]="nightmode">
+  <mat-sidenav-container class="sidenav-container" fullscreen>
+    <mat-sidenav
+      #drawer
+      class="sidenav"
+      [attr.role]="'dialog'"
+      [mode]="'push'"
+      [opened]="false">
+      <mat-toolbar color="primary">Menu</mat-toolbar>
+      <mat-nav-list>
+        <a mat-list-item routerLink="home">Home</a>
+        <span *ngIf="accountService.username !== null">
+          <a mat-list-item routerLink="devices">My devices</a>
+          <a mat-list-item routerLink="actions">Device actions</a>
+          <a mat-list-item routerLink="profile/logout">Logout</a>
+        </span>
+
+      </mat-nav-list>
+    </mat-sidenav>
+
+
+
+    <mat-sidenav-content>
+      <mat-toolbar color="primary" id="toolbar">
+        <button mat-button
+                type="button"
+                aria-label="Toggle sidenav"
+                (click)="drawer.toggle()">
+          <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+        </button>
+        <span>SmartHome</span>
+        <span class="toolbar-spacer"></span>
+        <section class="color-picker">
+          <button (click)="changeTheme()" mat-raised-button color="primary">NightMode</button>
+        </section>
+        <button id="account-btn" mat-button [matMenuTriggerFor]="menu">
+          <mat-icon class="toolbar-icon">account_circle</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item *ngIf="!accountService.username"><a mat-list-item routerLink="account/login">Login</a></button>
+          <button mat-menu-item *ngIf="!accountService.username"><a mat-list-item routerLink="account/register">Sign up</a></button>
+          <button mat-menu-item *ngIf="accountService.username"><a mat-list-item routerLink="profile">{{ accountService.username }}</a></button>
+          <button mat-menu-item *ngIf="accountService.username"><a mat-list-item routerLink="profile/logout">Logout</a></button>
+        </mat-menu>
+
+      </mat-toolbar>
+      <main>
+        <div style="width:100%;margin: 0 auto;">
+          <router-outlet></router-outlet>
+        </div>
+      </main>
+
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+
+</div>

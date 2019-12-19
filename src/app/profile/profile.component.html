@@ -1,0 +1,40 @@
+<div id="container" style="margin: 0 auto; padding-top: 20px; text-align: center">
+  <mat-card class="profile-card" id="telegram">
+    <div class="icon-container">
+      <i class="fab fa-telegram fa-8x" aria-hidden="true"></i>
+    </div>
+    <div class="profile-card-content">
+      <p>You can create your bot talking to @BotFather.</p>
+      <p>After updating token you have to write /smarthome to your bot and click connect button</p>
+      <mat-form-field>
+        <input matInput placeholder="Telegram token" [(ngModel)]="token_field">
+      </mat-form-field>
+      <button mat-raised-button (click)="updateToken()">Update token</button>
+      <button mat-raised-button (click)="connectTelegram()">Connect!</button>
+      <p>
+        <mat-checkbox [(ngModel)]="telegram_notification_field" (change)="updateTelegramNotification()">
+          Send notifications via Telegram
+        </mat-checkbox>
+      </p>
+    </div>
+  </mat-card>
+  <mat-card class="profile-card" id="mail">
+    <div class="icon-container">
+      <i class="fas fa-envelope fa-8x"></i>
+    </div>
+    <div class="profile-card-content">
+      <p>You can update your email address on which you will receive notifications</p>
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Email" [(ngModel)]="email_field">
+      </mat-form-field>
+      <button mat-raised-button (click)="updateEmail()">Update</button>
+      <p>
+        <mat-checkbox [(ngModel)]="email_notification_field" (change)="updateEmailNotification()">
+          Send notifications via Email
+        </mat-checkbox>
+      </p>
+    </div>
+
+  </mat-card>
+
+</div>

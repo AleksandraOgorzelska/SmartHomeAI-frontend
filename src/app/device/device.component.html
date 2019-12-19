@@ -1,0 +1,178 @@
+<!-- STEPPER -->
+
+<div style="width: 95%; margin: auto;">
+  <h2>Your devices</h2>
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        Add device in two easy steps!
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <mat-horizontal-stepper #stepper>
+      <mat-step [stepControl]="addDeviceFormGroup">
+        <form [formGroup]="addDeviceFormGroup">
+          <ng-template matStepLabel>Basic device informations</ng-template>
+          <mat-form-field class="display-table">
+            <input matInput placeholder="Device name" formControlName="devName" required>
+          </mat-form-field>
+          <mat-form-field class="display-table">
+            <mat-select placeholder="Device Type" formControlName="devType">
+              <mat-option *ngFor="let type of deviceTypes" [value]="type.id">
+                <i class="{{ type.icon }}"></i> {{ type.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <div>
+            <button mat-button matStepperNext>Next</button>
+          </div>
+        </form>
+      </mat-step>
+      <mat-step [stepControl]="addDeviceFormGroup">
+        <form [formGroup]="addDeviceFormGroup">
+          <ng-template matStepLabel>Capabilities</ng-template>
+
+          <div formArrayName="capabilities" class="capability-tab">
+            <div *ngFor="let capability of addDeviceFormGroup.controls.capabilities.controls; let i=index">
+              <div class="row">
+                <div [formGroupName]="i" class="grid">
+                  <input matInput formControlName="capabilityName" placeholder="Capability name">
+                  <mat-select placeholder="Capability Type" formControlName="capabilityType">
+                    <mat-option *ngFor="let cap of capabilities" [value]="cap.id">
+                      {{ cap.name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-select placeholder="Icon" formControlName="capabilityIcon">
+                    <mat-option *ngFor="let icon of iconList" [value]="icon.class">
+                      <i class="{{ icon.class }}"></i> {{ icon.label }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-icon class="toolbar-icon" (click)="removeCapability(i)"
+                            *ngIf="addDeviceFormGroup.controls.capabilities.length > 1">delete
+                  </mat-icon>
+                </div>
+              </div>
+            </div>
+            <button mat-mini-fab color="primary" id="addCapability" class="right" (click)="addCapability()">
+              +
+            </button>
+          </div>
+          <mat-form-field appearance="outline">
+            <mat-select placeholder="Main Capability" formControlName="mainCapability">
+              <mat-option *ngFor="let cap of addDeviceFormGroup.controls.capabilities.value; let i=index" [value]="i">
+                {{ cap.capabilityName }}
+              </mat-option>
+            </mat-select>
+            <span class="spacer"></span>
+          </mat-form-field>
+
+          <div>
+            <button mat-button matStepperPrevious>Back</button>
+            <button mat-button matStepperNext>Next</button>
+          </div>
+        </form>
+      </mat-step>
+      <mat-step>
+        <ng-template matStepLabel>Finish</ng-template>
+        <div>
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button (click)="addDevice()"
+                  [disabled]="!addDeviceFormGroup.controls.devName.valid ||
+                !addDeviceFormGroup.controls.devType.valid ||
+                !addDeviceFormGroup.controls.capabilities.valid ||
+                !areCapabilitiesUnique()">
+            Add device!
+          </button>
+        </div>
+        <mat-card *ngIf="errorMessage">{{ errorMessage }}</mat-card>
+      </mat-step>
+    </mat-horizontal-stepper>
+
+  </mat-expansion-panel>
+
+
+  <!-- DEVICES -->
+
+  <div id="device-container">
+    <mat-card class="device-card" *ngFor="let dev of devices">
+      <mat-card-content class="card-flex">
+        <div class="card-icon">
+          <div mat-card-avatar><i class="fa-4x {{ dev.type.icon }}"></i></div>
+        </div>
+        <div class="card-info">
+          <mat-card-title>{{ dev.name }}</mat-card-title>
+          <mat-card-subtitle [ngSwitch]="dev.mainCapability.component">
+            <i *ngIf="dev.mainCapability.component != 'icon'" class="{{ dev.mainCapability.icon }}"></i>
+            {{ dev.mainCapability.label }}<br>
+            <div class="card-component">
+              <mat-slide-toggle (change)="pubSwitch($event, dev.owner, dev.slug, dev.mainCapability.name)" *ngSwitchCase="'switch'"
+                                [checked]="capability_values.get(dev.owner + '/' + dev.slug) === 1"
+                                color="primary"></mat-slide-toggle>
+              <mat-slider thumbLabel *ngSwitchCase="'slider'" min="0" max="100" step="1" tickInterval="1"
+                          color="primary" [value]="capability_values.get(dev.owner + '/' + dev.slug)"
+                          (change)="pubSlider($event, dev.owner, dev.slug, dev.mainCapability.name)">
+              </mat-slider>
+              <span *ngSwitchCase="'text'" class="card-sensor-text">{{capability_values.get(dev.owner + '/' + dev.slug)}}</span>
+              <span *ngSwitchCase="'icon'">
+                <i class="{{ dev.mainCapability.icon }} fa-3x
+                          {{ capability_values.get(dev.owner + '/' + dev.slug) === 1 ? 'icon-on' : 'icon-off' }}"></i>
+              </span>
+            </div>
+          </mat-card-subtitle>
+        </div>
+        <div class="device-show">
+          <button mat-flat-button color="primary">
+            <a mat-list-item routerLink="/device/{{ dev.slug }}">show</a>
+          </button>
+        </div>
+        <div class="device-delete">
+          <i class="fas fa-trash fa-2x" (click)="deleteDevice(dev.id)"></i>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- SHARED -->
+
+  <div id="shared-device-container">
+    <h2>Shared devices</h2>
+    <mat-card class="device-card" *ngFor="let dev of sharedDevices">
+      <mat-card-content class="card-flex">
+        <div class="card-icon">
+          <div mat-card-avatar><i class="fa-4x {{ dev.type.icon }}"></i></div>
+        </div>
+        <div class="card-info">
+          <mat-card-title>{{ dev.name }}</mat-card-title>
+          <mat-card-subtitle [ngSwitch]="dev.mainCapability.component">
+            <i *ngIf="dev.mainCapability.component != 'icon'" class="{{ dev.mainCapability.icon }}"></i>
+            {{ dev.mainCapability.label }}<br>
+            <div class="card-component">
+              <mat-slide-toggle (change)="pubSwitch($event, dev.owner, dev.slug, dev.mainCapability.name)"
+                                *ngSwitchCase="'switch'"
+                                [checked]="capability_values.get(dev.owner + '/' + dev.slug) === 1"
+                                color="primary"></mat-slide-toggle>
+              <mat-slider thumbLabel *ngSwitchCase="'slider'" min="0" max="100" step="1" tickInterval="1"
+                          color="primary" [value]="capability_values.get(dev.owner + '/' + dev.slug)"
+                          (change)="pubSlider($event, dev.owner, dev.slug, dev.mainCapability.name)">
+              </mat-slider>
+              <span *ngSwitchCase="'text'" class="card-sensor-text">{{capability_values.get(dev.owner + '/' + dev.slug)}}</span>
+              <span *ngSwitchCase="'icon'">
+                <i class="{{ dev.mainCapability.icon }} fa-3x
+                          {{ capability_values.get(dev.owner + '/' + dev.slug) === 1 ? 'icon-on' : 'icon-off' }}"></i>
+              </span>
+            </div>
+          </mat-card-subtitle>
+          shared by {{ dev.owner }}
+        </div>
+        <div class="device-show">
+          <button mat-flat-button color="primary">
+            <a mat-list-item routerLink="/device/{{ dev.owner }}/{{ dev.slug }}">show</a>
+          </button>
+        </div>
+        <div class="device-delete">
+          <i class="fas fa-trash fa-2x" (click)="deleteShare(dev.id)"></i>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

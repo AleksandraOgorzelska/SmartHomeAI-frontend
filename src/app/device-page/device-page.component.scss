@@ -1,0 +1,43 @@
+@import "~@angular/material/theming";
+
+.icon-on {
+  color: mat-color(mat-palette($mat-green, 600));
+}
+
+.icon-off {
+  color: mat-color(mat-palette($mat-red, 600));
+}
+
+.back-button {
+  margin-top: 30px;
+}
+
+#device-card {
+  margin-top: 15px;
+}
+
+.mat-card-title {
+  margin-top: 20px;
+}
+
+#container {
+  display: inline-block;
+  /*z-index: 2;*/
+}
+
+.capability {
+  padding: 20px;
+  /*z-index: 2;*/
+}
+
+#device-container {
+  max-width: 1000px;
+  margin: auto;
+}
+
+#device-icon {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  z-index: 0;
+}
